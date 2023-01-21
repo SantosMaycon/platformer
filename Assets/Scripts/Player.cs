@@ -6,19 +6,23 @@ public class Player : MonoBehaviour {
   [SerializeField] private float speed;
   [SerializeField] private float jumpForce;
   [SerializeField] private int amountOfJump;
+  [SerializeField] private float attackArea;
   private Rigidbody2D rigidbody2d;
   private Animator animator;
+  private Transform _pointOfAttack;
   private int _amountOfJump;
   // Start is called before the first frame update
   void Start() {
     rigidbody2d = GetComponent<Rigidbody2D>();
     animator = transform.GetChild(0).GetComponent<Animator>();
+    _pointOfAttack = transform.GetChild(1).GetComponent<Transform>();
     _amountOfJump = amountOfJump;
   }
 
   // Update is called once per frame
   void Update() {
     jump();
+    attack();
   }
  
   void FixedUpdate() {
@@ -31,7 +35,11 @@ public class Player : MonoBehaviour {
     if (horizontal != 0) {
       rigidbody2d.velocity = new Vector2(horizontal * speed, rigidbody2d.velocity.y);
       transform.localScale = new Vector2(Mathf.Sign(horizontal), transform.localScale.y);
+    } else {
+      rigidbody2d.velocity = new Vector2(0f, rigidbody2d.velocity.y);
     }
+
+
 
     animator.SetBool("isRun", horizontal != 0);
   }
@@ -44,6 +52,22 @@ public class Player : MonoBehaviour {
     }
   }
 
+  void attack() {
+    if(Input.GetButtonDown("Fire1") && amountOfJump == _amountOfJump && _pointOfAttack) {
+      animator.SetTrigger("attacking");
+      Collider2D hit = Physics2D.OverlapCircle(_pointOfAttack.position, attackArea);
+
+      if(hit != null) {
+        Debug.Log(hit.name);
+      }
+    }
+  }
+
+  private void OnDrawGizmos() {
+    if (_pointOfAttack) {
+      Gizmos.DrawWireSphere(_pointOfAttack.position, attackArea);
+    }
+  }
 
   private void OnCollisionEnter2D(Collision2D other) {
     if (other.gameObject.layer == 8) {
