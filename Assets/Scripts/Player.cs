@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
+  [SerializeField] private int health;
   [SerializeField] private float speed;
   [SerializeField] private float jumpForce;
   [SerializeField] private int amountOfJump;
   [SerializeField] private float attackArea;
+  [SerializeField] private LayerMask enemyLayer;
   private Rigidbody2D rigidbody2d;
   private Animator animator;
   private Transform _pointOfAttack;
@@ -55,11 +57,17 @@ public class Player : MonoBehaviour {
   void attack() {
     if(Input.GetButtonDown("Fire1") && amountOfJump == _amountOfJump && _pointOfAttack) {
       animator.SetTrigger("attacking");
-      Collider2D hit = Physics2D.OverlapCircle(_pointOfAttack.position, attackArea);
+      Collider2D hit = Physics2D.OverlapCircle(_pointOfAttack.position, attackArea, enemyLayer);
 
-      if(hit != null) {
-        Debug.Log(hit.name);
-      }
+      hit?.GetComponent<Slime>().onHit();
+    }
+  }
+
+  void onHit() {
+    animator.SetTrigger("hit");
+
+    if (--health <= 0) {
+      animator.SetTrigger("death");
     }
   }
 
@@ -73,6 +81,12 @@ public class Player : MonoBehaviour {
     if (other.gameObject.layer == 8) {
       animator.SetBool("isJump", false);
       amountOfJump = _amountOfJump;
+    }
+  }
+
+  private void OnTriggerEnter2D(Collider2D other) {
+    if (other.gameObject.layer == 9) {
+      onHit();
     }
   }
 }
