@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
   [SerializeField] private int score;
@@ -10,6 +11,14 @@ public class GameManager : MonoBehaviour {
 
   private void Awake() {
     instance = this;
+
+    DontDestroyOnLoad(this);
+
+    if (instance) {
+      Destroy(gameObject);
+    } else {
+      instance = this;
+    }
   }
 
   // Start is called before the first frame update
@@ -20,5 +29,9 @@ public class GameManager : MonoBehaviour {
 
   public void GetCoin() {
     scoreText.text = (++score).ToString();
+  }
+
+  public void ChangeScene(string scene) {
+    SceneManager.LoadScene(scene);
   }
 }

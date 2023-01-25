@@ -15,6 +15,18 @@ public class Player : MonoBehaviour {
   private Animator animator;
   private Transform _pointOfAttack;
   private int _amountOfJump;
+  
+  private static Player instance;
+  void Awake() {
+   DontDestroyOnLoad(this);
+
+   if (instance) {
+    Destroy(gameObject);
+   } else {
+    instance = this;
+   }
+  }
+
   // Start is called before the first frame update
   void Start() {
     rigidbody2d = GetComponent<Rigidbody2D>();
