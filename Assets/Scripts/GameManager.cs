@@ -19,6 +19,11 @@ public class GameManager : MonoBehaviour {
     } else {
       instance = this;
     }
+
+    if (PlayerPrefs.GetInt("score") > 0) {
+      score = PlayerPrefs.GetInt("score");
+      scoreText.text = score.ToString();  
+    }
   }
 
   // Start is called before the first frame update
@@ -29,6 +34,7 @@ public class GameManager : MonoBehaviour {
 
   public void GetCoin() {
     scoreText.text = (++score).ToString();
+    PlayerPrefs.SetInt("score", score);
   }
 
   public void ChangeScene(string scene) {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Spawn : MonoBehaviour {
   void Awake() {
-    GameObject player = GameObject.FindGameObjectWithTag("Player"); 
+    GameObject player = GameObject.FindGameObjectWithTag("Player");
 
     if (player) {
       player.transform.position = transform.position;

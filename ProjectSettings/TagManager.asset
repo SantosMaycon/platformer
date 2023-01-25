@@ -7,6 +7,8 @@ TagManager:
   - Goblin
   - Slime
   - Coin
+  - Spawn
+  - Re Spawn
   layers:
   - Default
   - TransparentFX
