@@ -95,5 +95,11 @@ public class Player : MonoBehaviour {
     if (other.gameObject.layer == 9) {
       onHit();
     }
+
+    if (other.CompareTag("Coin")) {
+      GameManager.instance.GetCoin();
+      other.GetComponent<Animator>().SetTrigger("pick");
+      Destroy(other.gameObject, 1f);
+    }
   }
 }
