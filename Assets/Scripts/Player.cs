@@ -41,8 +41,6 @@ public class Player : MonoBehaviour {
       rigidbody2d.velocity = new Vector2(0f, rigidbody2d.velocity.y);
     }
 
-
-
     animator.SetBool("isRun", horizontal != 0);
   }
 
@@ -59,15 +57,24 @@ public class Player : MonoBehaviour {
       animator.SetTrigger("attacking");
       Collider2D hit = Physics2D.OverlapCircle(_pointOfAttack.position, attackArea, enemyLayer);
 
-      hit?.GetComponent<Slime>().onHit();
+      if (hit) {
+        if (hit.CompareTag("Slime")) {
+          hit.GetComponent<Slime>().onHit();
+        } 
+
+        if (hit.CompareTag("Goblin")) {
+          hit?.GetComponent<Goblin>().onHit();
+        }
+      }
     }
   }
 
-  void onHit() {
+  public void onHit() {
     animator.SetTrigger("hit");
 
     if (--health <= 0) {
       animator.SetTrigger("death");
+      Destroy(gameObject, 0.5f);
     }
   }
 
