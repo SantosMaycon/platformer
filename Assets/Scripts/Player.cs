@@ -9,13 +9,16 @@ public class Player : MonoBehaviour {
   [SerializeField] private int amountOfJump;
   [SerializeField] private float attackArea;
   [SerializeField] private LayerMask enemyLayer;
+  [SerializeField] private LayerMask groundLayer;
   private Rigidbody2D rigidbody2d;
+  private CapsuleCollider2D capsuleCollider2d;
   private Animator animator;
   private Transform _pointOfAttack;
   private int _amountOfJump;
   // Start is called before the first frame update
   void Start() {
     rigidbody2d = GetComponent<Rigidbody2D>();
+    capsuleCollider2d = GetComponent<CapsuleCollider2D>();
     animator = transform.GetChild(0).GetComponent<Animator>();
     _pointOfAttack = transform.GetChild(1).GetComponent<Transform>();
     _amountOfJump = amountOfJump;
@@ -29,6 +32,10 @@ public class Player : MonoBehaviour {
  
   void FixedUpdate() {
     move();
+    if (isGrounded() && rigidbody2d.velocity.y < 0.1f) {
+      animator.SetBool("isJump", false);
+      amountOfJump = _amountOfJump;
+    }
   }
 
   void move() {
@@ -50,6 +57,10 @@ public class Player : MonoBehaviour {
       animator.SetBool("isJump", true);
       amountOfJump--;
     }
+  }
+
+  private bool isGrounded() {
+    return Physics2D.Raycast(capsuleCollider2d.bounds.center, Vector2.down, 0.4f, groundLayer);
   }
 
   void attack() {
@@ -81,13 +92,6 @@ public class Player : MonoBehaviour {
   private void OnDrawGizmos() {
     if (_pointOfAttack) {
       Gizmos.DrawWireSphere(_pointOfAttack.position, attackArea);
-    }
-  }
-
-  private void OnCollisionEnter2D(Collision2D other) {
-    if (other.gameObject.layer == 8) {
-      animator.SetBool("isJump", false);
-      amountOfJump = _amountOfJump;
     }
   }
 
