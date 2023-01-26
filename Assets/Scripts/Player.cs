@@ -15,6 +15,8 @@ public class Player : MonoBehaviour {
   private Animator animator;
   private Transform _pointOfAttack;
   private int _amountOfJump;
+
+  private PlayerAudio playerAudio;
   
   private static Player instance;
   void Awake() {
@@ -33,6 +35,7 @@ public class Player : MonoBehaviour {
     capsuleCollider2d = GetComponent<CapsuleCollider2D>();
     animator = transform.GetChild(0).GetComponent<Animator>();
     _pointOfAttack = transform.GetChild(1).GetComponent<Transform>();
+    playerAudio = GetComponent<PlayerAudio>();
     _amountOfJump = amountOfJump;
   }
 
@@ -65,6 +68,7 @@ public class Player : MonoBehaviour {
 
   void jump() {
     if (Input.GetButtonDown("Jump") && amountOfJump > 0) {
+      playerAudio.PlaySFX(playerAudio.jumpSound);
       rigidbody2d.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
       animator.SetBool("isJump", true);
       amountOfJump--;
@@ -78,6 +82,7 @@ public class Player : MonoBehaviour {
   void attack() {
     if(Input.GetButtonDown("Fire1") && amountOfJump == _amountOfJump && _pointOfAttack) {
       animator.SetTrigger("attacking");
+      playerAudio.PlaySFX(playerAudio.hitSound);
       Collider2D hit = Physics2D.OverlapCircle(_pointOfAttack.position, attackArea, enemyLayer);
 
       if (hit) {
@@ -113,6 +118,7 @@ public class Player : MonoBehaviour {
     }
 
     if (other.CompareTag("Coin")) {
+      playerAudio.PlaySFX(playerAudio.coinSound);
       GameManager.instance.GetCoin();
       other.GetComponent<Animator>().SetTrigger("pick");
       Destroy(other.gameObject, 1f);
