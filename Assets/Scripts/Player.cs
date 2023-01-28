@@ -37,6 +37,8 @@ public class Player : MonoBehaviour {
     _pointOfAttack = transform.GetChild(1).GetComponent<Transform>();
     playerAudio = GetComponent<PlayerAudio>();
     _amountOfJump = amountOfJump;
+
+    GameManager.instance.SetHeartsOnHub(health);
   }
 
   // Update is called once per frame
@@ -98,9 +100,10 @@ public class Player : MonoBehaviour {
   }
 
   public void onHit() {
+    health--;
     animator.SetTrigger("hit");
-
-    if (--health <= 0) {
+    GameManager.instance.SetHeartsOnHub(health);
+    if (health <= 0) {
       animator.SetTrigger("death");
       Destroy(gameObject, 0.5f);
     }
@@ -123,5 +126,9 @@ public class Player : MonoBehaviour {
       other.GetComponent<Animator>().SetTrigger("pick");
       Destroy(other.gameObject, 1f);
     }
+  }
+
+  public int getHealth() {
+    return health;
   }
 }
